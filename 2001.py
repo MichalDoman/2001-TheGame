@@ -48,6 +48,19 @@ def main():
 </form>
 </body>
 </html>'''
+    html_end = '''
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <title>2001 - The Game</title>
+    </head>
+    <body>
+    <h1>{winner} wins!</h1>
+    <h2>Computer's score: {computer_score}</h2>
+    <h2>Player's score: {player_score}</h2>
+    </body>
+    </html>'''
     if request.method == 'GET':
         return html_init
     elif request.method == 'POST':
@@ -56,6 +69,8 @@ def main():
         dice_types_str = ', '.join(dice_types)
         turn = int(request.form['turn'])
         throw_announcement = ''
+        winner = ''
+        is_winner = False
         computer_score = int(request.form['computer_score'])
         player_score = int(request.form['player_score'])
 
@@ -81,14 +96,40 @@ def main():
         if turn > 0:
             player_score += (throw_1 + throw_2)
             computer_score += (comp_throw_1 + comp_throw_2)
+            if turn > 1:
+                player_score = modify_score(throw_1 + throw_2, player_score)
+                computer_score = modify_score(comp_throw_1 + comp_throw_2, computer_score)
             throw_announcement = f'''\n Your throws:  {throw_1} ,  {throw_2}\n
             Computer dice types:  {comp_dice_1_code} ,  {comp_dice_2_code}\n
             Computer throws:  {comp_throw_1} ,  {comp_throw_2}'''
 
+        if player_score >= 2001:
+            winner = 'Player'
+            is_winner = True
+        elif computer_score >= 2001:
+            winner = 'Computer'
+            is_winner = True
+
+        if is_winner:
+            return html_end.format(winner=winner, player_score=player_score, computer_score=computer_score)
 
         turn += 1
         return html_main.format(player_score=player_score, computer_score=computer_score,
                                 dice_types_str=dice_types_str, turn=turn) + throw_announcement
+
+
+def modify_score(throws_outcome, total_score):
+    """Calculates the modified score.
+
+    :param throws_outcome: The amount of points granted for one turn.
+    :param total_score: The total score that a player or computer has currently.
+    :return: Total score, modified depending on the throws_outcome.
+    """
+    if throws_outcome == 7:
+        total_score = int(total_score / 7)
+    elif throws_outcome == 11:
+        total_score = total_score * 11
+    return total_score
 
 
 if __name__ == '__main__':
