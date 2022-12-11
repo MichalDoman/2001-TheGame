@@ -21,6 +21,7 @@ def main():
     <input type="hidden" name="computer_score" value="0">
     <input type="hidden" name="throw_1" value="d6">
     <input type="hidden" name="throw_2" value="d6">
+    <input type="hidden" name="turn" value="0">
     <input type="submit" value="Play!">
 </form>
 </body>
@@ -42,6 +43,7 @@ def main():
     <label>Throw No.2: <input type="text" name=throw_2></label>
     <input type="hidden" name="player_score" value="{player_score}">
     <input type="hidden" name="computer_score" value="{computer_score}">
+    <input type="hidden" name="turn" value="{turn}">
     <input type="submit" value="Roll">
 </form>
 </body>
@@ -51,15 +53,28 @@ def main():
     elif request.method == 'POST':
         dice_types = ['D3', 'D4', 'D6', 'D8', 'D10', 'D12', 'D20', 'D100']
         dice_types_str = ', '.join(dice_types)
+        turn = int(request.form['turn'])
+        throw_announcement = ''
         computer_score = int(request.form['computer_score'])
         player_score = int(request.form['player_score'])
+
         throw_1 = request.form['throw_1']
         throw_2 = request.form['throw_2']
         if throw_1.upper() not in dice_types or throw_2.upper() not in dice_types:
             return html_main.format(player_score=player_score, computer_score=computer_score,
-                                    dice_types_str=dice_types_str) + 'This is not a valid code!'
+                                    dice_types_str=dice_types_str, turn=turn) + 'This is not a valid code!'
+        dice_1_size = int(throw_1.upper().strip('D'))
+        dice_2_size = int(throw_2.upper().strip('D'))
+        throw_1 = randint(1, dice_1_size)
+        throw_2 = randint(1, dice_2_size)
+        if turn > 0:
+            player_score += (throw_1 + throw_2)
+            throw_announcement = f'''\n Your throws:  {throw_1} ,  {throw_2}'''
 
-        return html_main.format(player_score=player_score, computer_score=computer_score, dice_types_str=dice_types_str)
+
+        turn += 1
+        return html_main.format(player_score=player_score, computer_score=computer_score,
+                                dice_types_str=dice_types_str, turn=turn) + throw_announcement
 
 
 if __name__ == '__main__':
