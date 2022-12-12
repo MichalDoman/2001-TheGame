@@ -29,5 +29,8 @@ hr.solid {
 }
 .choice {
 display: block;
-margin: 10px
+margin: 10px;
+text-align: center;
+color: #fff
 }
+

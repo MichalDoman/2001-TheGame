@@ -6,20 +6,6 @@ app = Flask(__name__)
 
 @app.route('/2001', methods=['GET', 'POST'])
 def main():
-    html_end = '''
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <title>2001 - The Game</title>
-      <link rel='stylesheet' href='2001.css'>
-    </head>
-    <body>
-    <h1>{winner} wins!</h1>
-    <h2>Computer's score: {computer_score}</h2>
-    <h2>Player's score: {player_score}</h2>
-    </body>
-    </html>'''
     if request.method == 'GET':
         return render_template('start.html')
     elif request.method == 'POST':
@@ -27,7 +13,9 @@ def main():
         dice_types = ['D3', 'D4', 'D6', 'D8', 'D10', 'D12', 'D20', 'D100']
         dice_types_str = ', '.join(dice_types)
         turn = int(request.form['turn'])
-        throw_announcement = ''
+        throw_announcement_1 = ''
+        throw_announcement_2 = ''
+        throw_announcement_3 = ''
         winner = ''
         is_winner = False
         computer_score = int(request.form['computer_score'])
@@ -38,7 +26,8 @@ def main():
         throw_2 = request.form['throw_2']
         if throw_1.upper() not in dice_types or throw_2.upper() not in dice_types:
             return render_template('game.html', player_score=player_score, computer_score=computer_score,
-                                    dice_types_str=dice_types_str, turn=turn) + '<h2>These are not valid dice types!!!</h2>'
+                                   dice_types_str=dice_types_str,
+                                   turn=turn) + '<h2>These are not valid dice types!!!</h2>'
         dice_1_size = int(throw_1.upper().strip('D'))
         dice_2_size = int(throw_2.upper().strip('D'))
         throw_1 = randint(1, dice_1_size)
@@ -58,10 +47,12 @@ def main():
             if turn > 1:
                 player_score = modify_score(throw_1 + throw_2, player_score)
                 computer_score = modify_score(comp_throw_1 + comp_throw_2, computer_score)
-            throw_announcement = f'''\n Your throws:  {throw_1} ,  {throw_2}\n
-            Computer dice types:  {comp_dice_1_code} ,  {comp_dice_2_code}\n
-            Computer throws:  {comp_throw_1} ,  {comp_throw_2}'''
+            throw_announcement_1 = f'Your throws: {throw_1}, {throw_2}'
+            throw_announcement_2 = f'Computer dice types: {comp_dice_1_code}, {comp_dice_2_code}'
+            throw_announcement_3 = f'Computer throws: {comp_throw_1}, {comp_throw_2}'
 
+
+        # Checks for the winner:
         if player_score >= 2001:
             winner = 'Player'
             is_winner = True
@@ -70,11 +61,12 @@ def main():
             is_winner = True
 
         if is_winner:
-            return html_end.format(winner=winner, player_score=player_score, computer_score=computer_score)
+            return render_template('game_over.html', winner=winner, player_score=player_score, computer_score=computer_score)
 
         turn += 1
         return render_template('game.html', player_score=player_score, computer_score=computer_score,
-                                dice_types_str=dice_types_str, turn=turn) + throw_announcement
+                               dice_types_str=dice_types_str, turn=turn, throw_announcement_1=throw_announcement_1,
+                               throw_announcement_2=throw_announcement_2, throw_announcement_3=throw_announcement_3)
 
 
 def modify_score(throws_outcome, total_score):
