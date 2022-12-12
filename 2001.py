@@ -1,8 +1,10 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, redirect
 from random import randint
 
 app = Flask(__name__)
 
+dice_types = ['D3', 'D4', 'D6', 'D8', 'D10', 'D12', 'D20', 'D100']
+dice_types_str = ', '.join(dice_types)
 
 @app.route('/2001', methods=['GET', 'POST'])
 def main():
@@ -10,8 +12,7 @@ def main():
         return render_template('start.html')
     elif request.method == 'POST':
         # Variables:
-        dice_types = ['D3', 'D4', 'D6', 'D8', 'D10', 'D12', 'D20', 'D100']
-        dice_types_str = ', '.join(dice_types)
+
         turn = int(request.form['turn'])
         throw_announcement_1 = ''
         throw_announcement_2 = ''
@@ -51,7 +52,6 @@ def main():
             throw_announcement_2 = f'Computer dice types: {comp_dice_1_code}, {comp_dice_2_code}'
             throw_announcement_3 = f'Computer throws: {comp_throw_1}, {comp_throw_2}'
 
-
         # Checks for the winner:
         if player_score >= 2001:
             winner = 'Player'
@@ -61,7 +61,8 @@ def main():
             is_winner = True
 
         if is_winner:
-            return render_template('game_over.html', winner=winner, player_score=player_score, computer_score=computer_score)
+            return render_template('game_over.html', winner=winner, player_score=player_score,
+                                   computer_score=computer_score)
 
         turn += 1
         return render_template('game.html', player_score=player_score, computer_score=computer_score,
@@ -81,6 +82,11 @@ def modify_score(throws_outcome, total_score):
     elif throws_outcome == 11:
         total_score = total_score * 11
     return total_score
+
+
+@app.route('/play_again')
+def play_again():
+    return redirect("/2001")
 
 
 if __name__ == '__main__':
