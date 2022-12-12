@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>2001 - The Game</title>
+  <link rel='stylesheet' href="{{ url_for('static', filename='css/2001.css') }}">
+</head>
+<body>
+<h1>Welcome to 2001!</h1>
+<h2>First one to reach the score of 2001 wins!</h2>
+<form action="" method="POST">
+    <input type="hidden" name="player_score" value="0">
+    <input type="hidden" name="computer_score" value="0">
+    <input type="hidden" name="throw_1" value="d6">
+    <input type="hidden" name="throw_2" value="d6">
+    <input type="hidden" name="turn" value="0">
+    <div class="ButtonHolder">
+        <button class="PlayButton" type='submit' role="button">Play!</button>
+    </div>
+
+</form>
+</body>
+</html>

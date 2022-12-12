@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, render_template, url_for
 from random import randint
 
 app = Flask(__name__)
@@ -12,6 +12,7 @@ def main():
 <head>
   <meta charset="UTF-8">
   <title>2001 - The Game</title>
+  <link rel='stylesheet' href="{{ url_for('static', filename='css/2001.css') }}">
 </head>
 <body>
 <h1>Welcome to 2001!</h1>
@@ -32,6 +33,7 @@ def main():
 <head>
   <meta charset="UTF-8">
   <title>2001 - The Game</title>
+  <link rel='stylesheet' href='2001.css'>
 </head>
 <body>
 <h2>Computer score: {computer_score}</h2>
@@ -54,6 +56,7 @@ def main():
     <head>
       <meta charset="UTF-8">
       <title>2001 - The Game</title>
+      <link rel='stylesheet' href='2001.css'>
     </head>
     <body>
     <h1>{winner} wins!</h1>
@@ -62,7 +65,7 @@ def main():
     </body>
     </html>'''
     if request.method == 'GET':
-        return html_init
+        return render_template('base.html')
     elif request.method == 'POST':
         # Variables:
         dice_types = ['D3', 'D4', 'D6', 'D8', 'D10', 'D12', 'D20', 'D100']
