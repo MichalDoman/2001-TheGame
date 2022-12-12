@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>2001 - The Game</title>
+    <link rel='stylesheet' href="{{ url_for('static', filename='css/2001.css') }}">
+</head>
+<body>
+<h2>Computer score: {{computer_score}}</h2>
+<h2>Your score: {{player_score}}</h2>
+<hr class="solid">
+<h3>Choose types of dice that you want to use: </h3>
+<form action="" method="POST">
+    <p>Possible dice types: {{dice_types_str}}</p>
+    <label class="choice">Throw No.1: <input type="text" name=throw_1></label>
+    <label class="choice">Throw No.2: <input type="text" name=throw_2></label>
+    <input type="hidden" name="player_score" value="{{player_score}}">
+    <input type="hidden" name="computer_score" value="{{computer_score}}">
+    <input type="hidden" name="turn" value="{{turn}}">
+    <div class="ButtonHolder">
+      <input class='PlayButton' type="submit" value="Roll">
+    </div>
+</form>
+</body>
+</html>
